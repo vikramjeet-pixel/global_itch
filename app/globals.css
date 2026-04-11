@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    letter-spacing: -0.01em;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scannable-item {
+    border-bottom: 1px solid #f0f0f3;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .scannable-item:hover {
+    background-color: #f7f9fc;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+
+  .problem-hidden {
+    display: none;
+    opacity: 0;
+  }
+  
+  .problem-visible {
+    display: block;
+    animation: fade-in-up 0.4s forwards;
+  }
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+button, a {
+  transition: all 0.2s ease-in-out;
+}
+
+button:active, a:active {
+  transform: scale(0.98);
+}
