@@ -389,20 +389,6 @@ export default function Home() {
         </div>
       </footer>
 
-      <nav className="md:hidden sticky bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-outline-variant/20 px-8 py-4 flex justify-between items-center z-50">
-        <button className="flex flex-col items-center gap-1 text-primary transition-transform active:scale-95">
-          <span className="material-symbols-outlined">adjust</span>
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Discovery</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-95">
-          <span className="material-symbols-outlined">data_exploration</span>
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Insights</span>
-        </button>
-        <button className="flex flex-col items-center gap-1 text-on-surface-variant opacity-60 hover:opacity-100 transition-all active:scale-95">
-          <span className="material-symbols-outlined">tactic</span>
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Strategy</span>
-        </button>
-      </nav>
     </>
   );
 }
