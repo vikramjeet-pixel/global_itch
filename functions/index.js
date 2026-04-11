@@ -53,7 +53,7 @@ exports.vertexItchJudge = onRequest({ timeoutSeconds: 540, memory: "512MiB" }, a
       });
 
       const prompt = `As a Tier-1 VC Analyst evaluating global market anomalies, critically evaluate this incoming array of ${batchPayload.length} systemic problems.
-For EACH item, consider its core premise and its recent spike in user interest (clicks). Given the 2026 economic climate, rate its "Founder Urgency" from 1-100 and provide a powerful 1-sentence VC logic for that specific rating.
+For EACH item, consider its core premise and its recent spike in user interest (clicks). Given the 2026 economic climate, rate its "Founder Urgency" from 1-10 and provide a powerful 1-sentence VC logic for that specific rating.
 
 Here is the data payload to analyze:
 ${JSON.stringify(batchPayload, null, 2)}
@@ -62,7 +62,7 @@ You MUST strictly output valid JSON as a flat array of objects matching this exa
 [
   {
     "id": "exact_item_id_from_payload",
-    "new_score": 85,
+    "new_score": 8,
     "verdict": "1-sentence logic explaining why this is a massive scaling opportunity."
   }
 ]`;

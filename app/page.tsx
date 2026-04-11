@@ -9,6 +9,19 @@ import { db } from '../lib/firebase';
 import { parsedProblems, Anomaly } from './data/problems';
 import { logItchInteraction } from '../lib/interactions';
 
+const MetricLabel = ({ title, definition }: { title: string; definition: string }) => (
+  <div className="group relative inline-flex items-center gap-1.5 mb-1 cursor-help outline-none" tabIndex={0}>
+    <p className="text-[10px] text-black/50 uppercase tracking-widest">{title}</p>
+    <div className="w-3 h-3 rounded-full border border-black/20 text-black/40 flex items-center justify-center text-[7px] font-bold group-hover:bg-black group-hover:text-white transition-colors shrink-0">
+      i
+    </div>
+    <div className="absolute bottom-full left-0 mb-2 w-48 p-2.5 bg-black text-white text-[10px] sm:text-[11px] leading-relaxed rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus:opacity-100 group-focus:visible transition-all duration-200 z-10 pointer-events-none shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-white/10 font-sans normal-case tracking-normal font-medium">
+      {definition}
+      <div className="absolute top-full left-3 -mt-px border-4 border-transparent border-t-black"></div>
+    </div>
+  </div>
+);
+
 export default function Home() {
   const [filter, setFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -89,10 +102,25 @@ export default function Home() {
             Stop searching for ideas. Great startups are born from painful, billion-dollar problems. We catalog the world&#39;s most severe market inefficiencies, broken systems, and regulatory gaps. Pick your battle, and start building.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 border-l-2 border-outline-variant/30 pl-4">
+          <div className="flex flex-col sm:flex-row gap-4 border-l-2 border-outline-variant/30 pl-4 mb-8">
             <p className="text-sm font-medium text-on-surface-variant/80 italic">
               &quot;The bigger the problem, the larger the opportunity.&quot;
             </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3 md:gap-4 mt-4">
+            <div className="px-4 py-3 border border-black/10 flex items-center gap-4 bg-white hover:bg-black hover:text-white transition-colors cursor-default group">
+               <span className="font-headline font-medium text-2xl group-hover:text-primary transition-colors">350+</span>
+               <span className="text-[9px] uppercase tracking-widest text-black/50 group-hover:text-white/70 transition-colors">Billion Dollar<br/>Problems Listed</span>
+            </div>
+            <div className="px-4 py-3 border border-black/10 flex items-center gap-4 bg-white hover:bg-black hover:text-white transition-colors cursor-default group">
+               <span className="font-headline font-medium text-2xl group-hover:text-primary transition-colors">10<span className="text-sm">yr</span></span>
+               <span className="text-[9px] uppercase tracking-widest text-black/50 group-hover:text-white/70 transition-colors">Business Ideas<br/>Validated for 2026+</span>
+            </div>
+            <div className="px-4 py-3 border border-black/10 flex items-center gap-4 bg-black text-white cursor-default">
+               <span className="font-headline font-medium text-2xl text-primary">AI</span>
+               <span className="text-[9px] uppercase tracking-widest text-white/50">Urgency Engine<br/>Powered By Gemini</span>
+            </div>
           </div>
         </section>
 
@@ -196,23 +224,23 @@ export default function Home() {
                       
                       <div className="grid grid-cols-2 gap-y-8 max-w-xl">
                         <div>
-                          <p className="text-[10px] text-black/50 uppercase tracking-widest mb-1">Severity Score</p>
+                          <MetricLabel title="Severity Score" definition="The immediate economic or operational pain caused by the anomaly, scaled 1-10." />
                           <p className="font-headline text-lg">{problem.severityScore || '-'}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-black/50 uppercase tracking-widest mb-1">TAM Score</p>
+                          <MetricLabel title="TAM Score" definition="Total Addressable Market. The financial scale of the opportunity if solved (1-10)." />
                           <p className="font-headline text-lg">{problem.tamScore || '-'}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-black/50 uppercase tracking-widest mb-1">Whitespace Score</p>
+                          <MetricLabel title="Whitespace Score" definition="The lack of existing competition or robust solutions targeting this specific problem (1-10)." />
                           <p className="font-headline text-lg">{problem.whitespaceScore || '-'}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-black/50 uppercase tracking-widest mb-1">Frequency Score</p>
+                          <MetricLabel title="Frequency Score" definition="How often the problem critically occurs for the target user demographic (1-10)." />
                           <p className="font-headline text-lg">{problem.frequencyScore || '-'}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] text-black/50 uppercase tracking-widest mb-1">Itch Score</p>
+                          <MetricLabel title="Itch Score" definition="The algorithmic calculation representing the ultimate Founder Urgency rating out of 10." />
                           <div className="flex items-center gap-3">
                             <p className="font-headline text-lg">{problem.itchScore || '-'}</p>
                             {isHot && (
