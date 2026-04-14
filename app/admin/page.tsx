@@ -6,10 +6,23 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 import { parsedProblems } from '../data/problems';
 
 export default function AdminPage() {
+  const [passcode, setPasscode] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [complete, setComplete] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcode === '2006') {
+      setIsUnlocked(true);
+    } else {
+      alert("Security Breach: Incorrect Access Code.");
+      setPasscode('');
+    }
+  };
 
   const migrateData = async () => {
     setLoading(true);
@@ -38,6 +51,22 @@ export default function AdminPage() {
       setLoading(false);
     }
   };
+
+  if (!isUnlocked) {
+    return (
+      <div className="p-20 text-on-surface min-h-screen bg-black flex flex-col items-center justify-center font-sans">
+        <div className="max-w-md w-full bg-[#111] p-10 border border-white/10 rounded-md">
+          <h2 className="font-headline text-2xl text-white mb-6 flex items-center justify-center gap-3">
+             <span className="material-symbols-outlined text-white/50">lock</span> System Secure
+          </h2>
+          <form onSubmit={handleUnlock} className="flex flex-col gap-4">
+             <input type="password" value={passcode} onChange={e => setPasscode(e.target.value)} className="flex-1 bg-black border border-white/20 p-4 outline-none focus:border-primary text-center tracking-[1em] text-2xl text-white rounded-sm" placeholder="••••" autoFocus />
+             <button type="submit" className="bg-white text-black hover:bg-primary transition-colors py-4 font-bold uppercase text-[10px] tracking-widest mt-2 rounded-sm w-full">Bypass Protocol</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-20 text-on-surface min-h-screen bg-surface flex flex-col items-start font-sans">

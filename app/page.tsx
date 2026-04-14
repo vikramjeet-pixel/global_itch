@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { parsedProblems, Anomaly } from './data/problems';
 import { logItchInteraction } from '../lib/interactions';
@@ -32,6 +32,35 @@ export default function Home() {
   const [stats, setStats] = useState<Record<string, number>>({});
   const [hotThreshold, setHotThreshold] = useState<number>(Infinity);
   const [loading, setLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Form State
+  const [submitName, setSubmitName] = useState('');
+  const [submitLocation, setSubmitLocation] = useState('Global');
+  const [submitIdea, setSubmitIdea] = useState('');
+  const [submitState, setSubmitState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleItchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!submitIdea.trim()) return;
+    setSubmitState('loading');
+    try {
+      await addDoc(collection(db, 'unvalidated_itches'), {
+        name: submitName || 'Anonymous',
+        location: submitLocation,
+        idea: submitIdea,
+        submitted_at: new Date()
+      });
+      setSubmitState('success');
+      setSubmitName('');
+      setSubmitLocation('Global');
+      setSubmitIdea('');
+      setTimeout(() => setSubmitState('idle'), 5000);
+    } catch(err) {
+      console.error(err);
+      setSubmitState('error');
+    }
+  };
 
   useEffect(() => {
     const fetchStatsOnly = async () => {
@@ -84,10 +113,36 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-6">
             <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="Search">search</button>
-            <button className="material-symbols-outlined text-on-surface hover:text-primary transition-colors" aria-label="Menu">menu</button>
+            <button onClick={() => setIsMobileMenuOpen(true)} className="material-symbols-outlined text-on-surface hover:text-primary transition-colors" aria-label="Menu">menu</button>
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          className="fixed inset-0 z-[100] bg-white text-on-surface flex flex-col pt-5 px-6"
+        >
+          <div className="flex justify-between items-center mb-16">
+            <span className="font-headline text-2xl font-medium tracking-tight">GLOBAL-itch</span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="material-symbols-outlined text-2xl">close</button>
+          </div>
+          
+          <nav className="flex flex-col gap-10 text-3xl font-headline tracking-tight mt-10">
+            <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors">Home</Link>
+            <Link href="#problem-list-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors">Regional Problems</Link>
+            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors text-primary italic">Admin Area</Link>
+          </nav>
+          
+          <div className="mt-auto pb-12">
+            <p className="text-xs text-on-surface-variant opacity-60">
+              &copy; 2026 Analytical Archive System.
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       <main className="flex-grow w-full max-w-6xl mx-auto px-6 pt-16 pb-24">
         
@@ -127,7 +182,7 @@ export default function Home() {
         <div id="problem-list-section" className="scroll-mt-24">
           
           <div className="flex items-end justify-between border-b border-on-surface/10 pb-4 mb-6">
-            <h2 className="font-headline text-2xl text-on-surface">Regional Anomalies</h2>
+            <h2 className="font-headline text-2xl text-on-surface">Regional Problems</h2>
             <div className="flex items-center gap-2 text-on-surface-variant/60">
               <span className="material-symbols-outlined text-sm">filter_list</span>
               <span className="text-[10px] font-bold uppercase tracking-widest">Filter active</span>
@@ -224,7 +279,7 @@ export default function Home() {
                       
                       <div className="grid grid-cols-2 gap-y-8 max-w-xl">
                         <div>
-                          <MetricLabel title="Severity Score" definition="The immediate economic or operational pain caused by the anomaly, scaled 1-10." />
+                          <MetricLabel title="Severity Score" definition="The immediate economic or operational pain caused by the problem, scaled 1-10." />
                           <p className="font-headline text-lg">{problem.severityScore || '-'}</p>
                         </div>
                         <div>
@@ -284,7 +339,7 @@ export default function Home() {
             {!loading && filteredProblems.length === 0 && (
               <div className="py-20 text-center animate-fade-in">
                   <span className="material-symbols-outlined text-5xl text-outline-variant mb-4 font-light">search_off</span>
-                  <h3 className="font-headline text-2xl text-on-surface mb-2">No anomalies tracked</h3>
+                  <h3 className="font-headline text-2xl text-on-surface mb-2">No problems tracked</h3>
                   <p className="text-sm text-on-surface-variant">We currently have no major systemic risks logged for this region.</p>
               </div>
             )}
@@ -296,20 +351,36 @@ export default function Home() {
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2 block">Direct Input</span>
           <h2 className="font-headline text-3xl md:text-4xl mb-4 text-on-surface">Submit an Itch or Idea</h2>
           <p className="text-sm text-on-surface-variant mb-8">
-            Have you noticed an emergent systemic risk or industrial anomaly? Share your observations to be cataloged by our curators.
+            Have you noticed an emergent systemic risk or industrial problem? Share your observations to be cataloged by our curators.
           </p>
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Your Name / ID</label>
-              <input type="text" id="name" className="border border-outline-variant/40 bg-surface-container-low p-3 rounded-sm focus:outline-none focus:border-primary transition-colors w-full text-sm" placeholder="Anonymous Entity" />
+          <form className="space-y-6" onSubmit={handleItchSubmit}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Your Name / ID</label>
+                <input type="text" id="name" value={submitName} onChange={(e) => setSubmitName(e.target.value)} className="border border-outline-variant/40 bg-surface-container-low p-3 rounded-sm focus:outline-none focus:border-primary transition-colors w-full text-sm" placeholder="Anonymous Entity" disabled={submitState === 'loading'} />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="location" className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Detected Location</label>
+                <select id="location" value={submitLocation} onChange={(e) => setSubmitLocation(e.target.value)} className="border border-outline-variant/40 bg-surface-container-low p-3 rounded-sm focus:outline-none focus:border-primary transition-colors w-full text-sm appearance-none cursor-pointer" disabled={submitState === 'loading'}>
+                  <option value="Global">Global / Systemic</option>
+                  <option value="North America">North America</option>
+                  <option value="South America">South America</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Asia">Asia</option>
+                  <option value="Africa">Africa</option>
+                  <option value="Oceania">Oceania</option>
+                </select>
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="idea" className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Observation Details</label>
-              <textarea id="idea" rows={4} className="border border-outline-variant/40 bg-surface-container-low p-3 rounded-sm focus:outline-none focus:border-primary transition-colors w-full resize-none text-sm" placeholder="Describe the anomaly or systemic itch..."></textarea>
+              <textarea id="idea" rows={4} value={submitIdea} onChange={(e) => setSubmitIdea(e.target.value)} className="border border-outline-variant/40 bg-surface-container-low p-3 rounded-sm focus:outline-none focus:border-primary transition-colors w-full resize-none text-sm" placeholder="Describe the problem or systemic itch..." disabled={submitState === 'loading'} required></textarea>
             </div>
-            <button type="submit" className="bg-on-surface text-white px-8 py-4 text-sm font-medium hover:bg-primary transition-colors rounded-sm flex items-center justify-center gap-2 group w-full sm:w-max mt-4">
-              Submit Record
-              <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            
+            <button type="submit" disabled={submitState === 'loading' || submitState === 'success'} className="bg-on-surface text-white px-8 py-4 text-sm font-medium hover:bg-primary transition-colors disabled:bg-surface-container-highest disabled:text-on-surface-variant rounded-sm flex items-center justify-center gap-2 group w-full sm:w-max mt-4">
+              {submitState === 'loading' && <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></span>}
+              {submitState === 'success' ? 'Record Submitted Successfully' : submitState === 'error' ? 'Error Submitting' : 'Submit Record'}
+              {submitState === 'idle' && <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>}
             </button>
           </form>
         </section>
@@ -325,7 +396,7 @@ export default function Home() {
               <span className="material-symbols-outlined">close</span>
             </button>
             <h3 className="font-headline text-xl text-on-surface mb-2 pr-6 border-b border-outline-variant/20 pb-4">
-              <span className="block text-[10px] text-on-surface-variant uppercase tracking-widest mb-2 font-bold">Anomaly Selected</span>
+              <span className="block text-[10px] text-on-surface-variant uppercase tracking-widest mb-2 font-bold">Problem Selected</span>
               <span className="italic">&quot;{deepDiveProblem.title}&quot;</span>
             </h3>
 
@@ -340,7 +411,7 @@ export default function Home() {
                 { name: 'Perplexity', urlBase: 'https://www.perplexity.ai/?q=', slug: 'perplexity' },
                 { name: 'Grok', urlBase: 'https://grok.com/?q=', slug: 'x' }
               ].map(ai => {
-                const prompt = `Give me more information about "${deepDiveProblem.title}": ${deepDiveProblem.description}`;
+                const prompt = `Act as a Tier-1 VC and Startup Strategist. I am considering tackling this massive global anomaly: "${deepDiveProblem.title}".\n\nContext: ${deepDiveProblem.description}\n\nPlease critically evaluate this opportunity and provide the following:\n1. The top 3 commercial bottlenecks preventing this from being solved right now.\n2. The most logical Minimum Viable Product (MVP) to test this hypothesis.\n3. Is there a realistic multi-billion dollar TAM here?`;
                 const url = `${ai.urlBase}${encodeURIComponent(prompt)}`;
                 return (
                   <a 
