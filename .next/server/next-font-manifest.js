@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/vikramjeetsingh/Desktop/work/globalitch/global_itch/app/layout\":[\"static/media/e4af272ccee01ff0-s.p.woff2\",\"static/media/4b9bb515ce6d026f.p.woff2\",\"static/media/5611c55482296524.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
