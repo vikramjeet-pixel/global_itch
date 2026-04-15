@@ -112,8 +112,7 @@ export default function Home() {
             <span className="font-headline text-2xl font-medium tracking-tight text-on-surface group-hover:text-primary transition-colors">GLOBAL-itch</span>
           </div>
           <div className="flex items-center gap-6">
-            <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" aria-label="Search">search</button>
-            <button onClick={() => setIsMobileMenuOpen(true)} className="material-symbols-outlined text-on-surface hover:text-primary transition-colors" aria-label="Menu">menu</button>
+            <button onClick={() => setIsMobileMenuOpen(true)} className="material-symbols-outlined text-on-surface hover:text-primary transition-colors md:hidden" aria-label="Menu">menu</button>
           </div>
         </div>
       </header>
@@ -133,7 +132,6 @@ export default function Home() {
           <nav className="flex flex-col gap-10 text-3xl font-headline tracking-tight mt-10">
             <Link href="#" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors">Home</Link>
             <Link href="#problem-list-section" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors">Regional Problems</Link>
-            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-primary transition-colors text-primary italic">Admin Area</Link>
           </nav>
           
           <div className="mt-auto pb-12">
@@ -228,7 +226,7 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="mt-8" id="problem-list">
+          <section className="mt-8 min-h-[50vh]" id="problem-list">
             <div className="flex justify-between items-center text-[10px] text-on-surface-variant uppercase font-bold tracking-widest pb-4 mb-2 border-b border-outline-variant/40 px-2">
               <span>Itches</span>
               <div className="flex items-center gap-6 justify-end text-right">
@@ -437,26 +435,18 @@ export default function Home() {
         </div>
       )}
 
-      <footer className="w-full bg-surface-container-low border-t border-outline-variant/10 py-16 px-6 mt-10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-12">
-          <div>
-            <span className="font-headline text-xl font-medium text-on-surface">Problem Radar</span>
-            <p className="text-xs text-on-surface-variant mt-2 opacity-60 max-w-[200px] leading-relaxed">
-              &copy; 2024 Analytical Archive System. Curating complexity for clarity.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-12">
-            <nav className="flex flex-col gap-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Product</span>
-              <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Documentation</Link>
-              <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors" href="#">API Access</Link>
-            </nav>
-            <nav className="flex flex-col gap-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Legal</span>
-              <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</Link>
-              <Link className="text-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</Link>
-            </nav>
-          </div>
+      <footer className="w-full bg-surface-container-low border-t border-outline-variant/10 py-20 px-6 mt-10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center justify-center text-center gap-6">
+          <p className="font-headline text-2xl md:text-3xl text-on-surface max-w-2xl italic font-medium">
+            "The world doesn't need another generic app. It needs builders who aren't afraid to fix the fracture."
+          </p>
+          <div className="w-12 h-[1px] bg-outline-variant/30 my-4"></div>
+          <p className="text-xs md:text-sm text-on-surface-variant uppercase tracking-widest font-bold">
+            Built by <a href="https://www.linkedin.com/in/vikramjeet-singh-539743326/" target="_blank" rel="noreferrer" className="text-primary hover:text-black transition-colors underline decoration-primary/50 underline-offset-4">Vikramjeet Singh</a>
+          </p>
+          <p className="text-[10px] text-on-surface-variant opacity-50 mt-2">
+            &copy; {new Date().getFullYear()} Global Itch. Curating complexity for clarity.
+          </p>
         </div>
       </footer>
 
